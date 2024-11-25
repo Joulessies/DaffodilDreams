@@ -10,7 +10,7 @@ $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($conn->connect_error) {
 } else if ($conn->connect_errno) {
 } else {
-    $sql = "SELECT * FROM `daffodil`.`users`";
+    $sql = "SELECT * FROM `daffodil`.`users` ";
 }
 
 if ($conn->query($sql)) {
