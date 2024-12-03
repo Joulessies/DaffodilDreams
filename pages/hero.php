@@ -11,10 +11,10 @@
     <div class="hero">
         <div class="text">
             <h1>Buy Flowers For Any <span id="occasions">Occasion</span></h1>
-            <p>
-                Whether you're celebrating a birthday, anniversary, wedding,<br>
-                or simply want to brighten someone's day,<br>
-                flowers are the perfect way to express your emotions.
+            <br>
+            Whether you're celebrating a birthday, anniversary, wedding,
+            or</br> want to brighten someone's day,</br>
+            flowers are the perfect way to express your emotions.
             </p>
             <button href="shop.php" type="button" class="btn" style="background-color: #FF5733; color: white;"><a>Order
                     Now</a></button>

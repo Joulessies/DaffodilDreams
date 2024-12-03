@@ -1,40 +1,8 @@
 <?php
-include('./includes/db.php'); // Include the database connection
-session_start();
-
-// Check if the user is logged in and has admin privileges
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header("Location: login.php");
-    echo"Added successfully";
-    exit();
-}
-
-// Handle delete request
-if (isset($_GET['delete'])) {
-    $userId = intval($_GET['delete']);
-    
-    // Prepare and execute the delete statement
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-    if ($stmt) {
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $stmt->close();
-    }
-    
-    // Redirect after deletion
-    header("Location: user_maintenance.php");
-    exit();
-}
-
-// Fetch all users
-$result = $conn->query("SELECT id, name, email, created_at FROM users");
-
-// Check for query errors
-if ($result === false) {
-    die("Error fetching users: " . $conn->error);
-}
+include("includes\db.php");
+$query = "SELECT * FROM users";
+$result = mysqli_query($conn, $query);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,17 +10,44 @@ if ($result === false) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Maintenance</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: black;
+        color: white;
+    }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-4">
-        <h2>User Maintenance</h2>
-        <a href="add_user.php" class="btn btn-success mb-3">Add New User</a>
+    <div class="container">
+        <h1 class="mt-5">User Maintenance System</h1>
+
+        <!-- Add User Form -->
+        <form action="user_maintenance_process.php" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add User</button>
+        </form>
+
+        <hr>
+
+        <!-- Users List -->
+        <h3 class="mt-5">Users List</h3>
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Created At</th>
@@ -60,24 +55,23 @@ if ($result === false) {
                 </tr>
             </thead>
             <tbody>
-                <?php while ($user = $result->fetch_assoc()): ?>
+                <?php while ($user = mysqli_fetch_assoc($result)) { ?>
                 <tr>
-                    <td><?= $user['id']; ?></td>
-                    <td><?= htmlspecialchars($user['name']); ?></td>
-                    <td><?= htmlspecialchars($user['email']); ?></td>
-                    <td><?= $user['created_at']; ?></td>
+                    <td><?php echo $user['id']; ?></td>
+                    <td><?php echo $user['NAME']; ?></td>
+                    <td><?php echo $user['email']; ?></td>
+                    <td><?php echo $user['created_at']; ?></td>
                     <td>
-                        <a href="edit_user.php?id=<?= $user['id']; ?>" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="user_maintenance.php?delete=<?= $user['id']; ?>" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                        <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
-                <?php endwhile; ?>
+                <?php } ?>
             </tbody>
         </table>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

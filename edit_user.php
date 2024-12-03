@@ -1,43 +1,15 @@
 <?php
-include('./includes/db.php');
-session_start();
+include("includes\db.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header("Location: login.php");
-    exit();
-}
+$id = intval($_GET["id"]);
+$query = "SELECT * FROM users WHERE id = $id";
+$result = mysqli_query($conn, $query);
+$user = mysqli_fetch_assoc($result);
 
-if (!isset($_GET['id'])) {
-    header("Location: user_maintenance.php");
-    exit();
-}
-
-$userId = intval($_GET['id']);
-$result = $conn->query("SELECT * FROM users WHERE id = $userId");
-$user = $result->fetch_assoc();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $conn->real_escape_string($_POST['name']);
-    $email = $conn->real_escape_string($_POST['email']);
-
-    if (!empty($_POST['password'])) {
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?");
-        $stmt->bind_param("sssi", $name, $email, $password, $userId);
-    } else {
-        $stmt = $conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $name, $email, $userId);
-    }
-
-    if ($stmt->execute()) {
-        header("Location: user_maintenance.php");
-        exit();
-    } else {
-        $error = "Error updating user: " . $conn->error;
-    }
+if (!$user) {
+    die("User not found.");
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,31 +17,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: black;
+        color: white;
+    }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container mt-4">
-        <h2>Edit User</h2>
-        <?php if (isset($error)): ?>
-        <div class="alert alert-danger"><?= $error; ?></div>
-        <?php endif; ?>
-        <form action="edit_user.php?id=<?= $userId; ?>" method="POST">
+    <div class="container">
+        <h1 class="mt-5">Edit User</h1>
+        <form action="edit_user_process.php" method="POST">
+            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name"
-                    value="<?= htmlspecialchars($user['name']); ?>" required>
+                <input type="text" class="form-control" id="name" name="name" value="<?php echo $user['NAME']; ?>"
+                    required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email"
-                    value="<?= htmlspecialchars($user['email']); ?>" required>
+                <input type="email" class="form-control" id="email" name="email" value="<?php echo $user['email']; ?>"
+                    required>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password (Leave blank to keep current password)</label>
+                <label for="password" class="form-label">New Password</label>
                 <input type="password" class="form-control" id="password" name="password">
+                <small class="text-muted">Leave blank to keep the current password.</small>
             </div>
-            <button type="submit" class="btn btn-primary">Update User</button>
+            <button type="submit" class="btn btn-success">Update User</button>
         </form>
     </div>
 </body>

@@ -10,9 +10,9 @@
 
 <body>
 
-    <?php include("pages/navbarsample.php"); ?>
+    <?php include("pages/navbar.php"); ?>
 
-    <?php include("components\shop-hero.php"); ?>
+    <?php include("shop-hero.php"); ?>
 
     <?php include("shop-js.php") ?>
 

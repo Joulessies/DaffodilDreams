@@ -18,7 +18,6 @@ include './includes/db.php';
 </head>
 
 <body>
-
     <?php include 'pages/navbar.php'?>
 
     <?php include 'pages/hero.php'?>
@@ -28,6 +27,10 @@ include './includes/db.php';
     <?php include 'pages/discount.php'?>
 
     <?php include 'pages/staff.php' ?>
+
+    <?php include 'pages/marquee.php'?>
+
+    <?php include 'pages/products.php' ?>
 
     <?php include 'pages/footer.php' ?>
 
