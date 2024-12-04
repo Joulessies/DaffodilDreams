@@ -103,7 +103,7 @@
     <div class="marquee">
         <div class="marquee__inner-wrap">
             <div class="marquee__inner">
-                <div class="marquee__img" style="background-image: url('assets\images\Roses\marqueerose1.png');"></div>
+                <div class="marquee__img" style="background-image: url('assets/images/Hero/Hero.png');"></div>
                 <div class="marquee__img" style="background-image: url('assets/images/Hero/Hero.png');"></div>
                 <div class="marquee__img" style="background-image: url('assets/images/Hero/Hero.png');"></div>
                 <div class="marquee__img" style="background-image: url('assets/images/Hero/Hero.png');"></div>

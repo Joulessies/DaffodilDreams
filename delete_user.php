@@ -1,36 +1,30 @@
 <?php
-include('includes/db.php');
+include("includes/db.php");
 
 if (isset($_GET['id'])) {
-    $product_id = $_GET['id'];
+    $user_id = $_GET['id'];
 
-    // Get the product details to delete the image file
-    $sql = "SELECT image FROM products WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
+    // Check if the user exists
+    $query = "SELECT * FROM users WHERE id = '$user_id'";
+    $result = mysqli_query($conn, $query);
 
-    // Delete the image file from the server
-    if ($product) {
-        $image_path = $product['image'];
-        if (file_exists($image_path)) {
-            unlink($image_path); // Remove the file
+    if (mysqli_num_rows($result) > 0) {
+        // Delete the user
+        $delete_query = "DELETE FROM users WHERE id = '$user_id'";
+        if (mysqli_query($conn, $delete_query)) {
+            // Redirect to user maintenance page with success message
+            header("Location: user_maintenance.php?status=deleted");
+            exit();
+        } else {
+            // Error deleting user
+            echo "Error deleting user: " . mysqli_error($conn);
         }
-    }
-
-    // Delete the product from the database
-    $sql = "DELETE FROM products WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $product_id);
-
-    if ($stmt->execute()) {
-        echo "<div class='alert alert-success'>Product deleted successfully!</div>";
     } else {
-        echo "<div class='alert alert-danger'>Error deleting the product.</div>";
+        // User not found
+        echo "User not found!";
     }
+} else {
+    // No user ID provided
+    echo "No user ID provided!";
 }
-
-$conn->close();
 ?>
